@@ -1,13 +1,13 @@
 # server setup
 FROM python:3.8
 
-RUN mkdir app
+RUN mkdir api
 
-COPY app/ app/
+COPY api/ api/
 
-COPY requirements.txt app/
+COPY requirements.txt api/
 
-WORKDIR app
+WORKDIR api
 
 RUN chmod +x requirements.txt
 
