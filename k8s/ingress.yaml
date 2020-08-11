@@ -2,7 +2,7 @@ kind: Ingress
 apiVersion: extensions/v1beta1
 metadata:
   name: kubeportal-api-dev-ingress
-  namespace: kubeportal
+  namespace: sachs
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
     kubernetes.io/ingress.class: nginx

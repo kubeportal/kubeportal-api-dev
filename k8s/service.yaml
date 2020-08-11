@@ -2,7 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: kubeportal-api-dev-service
-  namespace: kubeportal
+  namespace: sachs
 spec:
   ports:
   - protocol: TCP
