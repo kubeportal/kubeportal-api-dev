@@ -12,14 +12,22 @@ def hello_world():
 @app.route('/users/<uid>', methods=['GET'])
 def get_current_user(uid):
     users = mock.users
-    for user in users:
-        if user['username'] == uid:
-            return jsonify(user)
+    user = next((user for user in users if user['username'] == uid), {'user' : None})
+    return jsonify(user)
 
 @app.route('/webapps', methods=['GET'])
 def get_all_webapps():
     return jsonify(mock.webapps)
 
-@app.route('/statistics', methods=['GET'])
-def get_cluster_statistics():
-    return jsonify(mock.statistics)
+@app.route('/statistics/<metricname>', methods=['GET'])
+def get_cluster_statistics(metricname):
+    metrics = mock.metrics
+    '''
+    iterate through the list of metrics, remove whitespaces in key and convert key to lowerspace to match with url param
+    '''
+    for metric in metrics:
+        if next(iter(metric)).lower().replace(' ', '') == metricname:
+            return jsonify(metric)
+    return jsonify({'metric': None})
+
+

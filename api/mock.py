@@ -21,13 +21,13 @@ webapps = [{"name": "kakatoo",
             "can_subauth": "true",
             }]
 
-statistics = {"Kubernetes": "v1.15.4",
-              "API Server": "https://10.96.0.1:443",
-              "Cluster Nodes": 24,
-              "CPU Cores": 1536,
-              "Main Memory": "12543.876796Gi",
-              "Deployed Pods": 723,
-              "Allocated Volumes": 227,
-              "Portal Users": 120,
-              "KubePortal": "v.0.3.16",
-              }
+metrics = [{"Kubernetes": "v1.15.4"},
+           {"API Server": "https://10.96.0.1:443"},
+           {"Cluster Nodes": 24},
+           {"CPU Cores": 1536},
+           {"Main Memory": "12543.876796Gi"},
+           {"Deployed Pods": 723},
+           {"Allocated Volumes": 227},
+           {"Portal Users": 120},
+           {"KubePortal": "v.0.3.16"},
+           ]
