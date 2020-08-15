@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response, redirect
 from flask_cors import CORS
 from functools import wraps
 import jwt
@@ -22,6 +22,9 @@ def token_required(f):
             return jsonify({'message': 'Token is missing'}), 403
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'])
+            verified = security.token_verify(data)
+            if verified is None:
+                return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Failed"'})
         except:
             return jsonify({'message': 'Token is invalid'}), 403
         return f(*args, **kwargs)
