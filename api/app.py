@@ -69,7 +69,8 @@ def get_cluster_statistics(metricname):
 def login():
     auth = json.loads(request.data.decode('utf-8'))
     authenticated = security.authenticate(auth_key='username', auth_value=auth['username'], identifier=auth['password'])
-    if authenticated is None:
+    if not authenticated['authenticated_and_authorized']:
+        print('authenticate is none')
         return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Required"'})
     else:
         token = generate_token(auth)
