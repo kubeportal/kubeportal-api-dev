@@ -3,15 +3,16 @@ from flask_cors import CORS
 from functools import wraps
 import jwt
 import datetime
+import os
 from . import mock
 from . import security
-
 import json
 
 app = Flask(__name__)
 CORS(app)
 
-app.config['SECRET_KEY'] = 'kubeportal'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+PRIVATE_KEY = os.environ.get('GOOGLE_PRIVATE_KEY')
 
 
 def token_required(f):
@@ -19,14 +20,15 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = request.headers['Authorization'].split(' ')[1]
         if not token:
-            return jsonify({'message': 'Token is missing'}), 403
+            return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Failed"'})
         try:
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-            verified = security.token_verify(data)
+            decoded_token = jwt.decode(token, app.config['SECRET_KEY'])
+            verified = security.token_verify(decoded_token)
             if verified is None:
                 return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Failed"'})
-        except:
-            return jsonify({'message': 'Token is invalid'}), 403
+        except Exception as e:
+            print(e.__cause__)
+            return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Failed"'})
         return f(*args, **kwargs)
     return decorated
 
@@ -66,11 +68,31 @@ def get_cluster_statistics(metricname):
 @app.route('/login', methods=['POST'])
 def login():
     auth = json.loads(request.data.decode('utf-8'))
-    print(auth)
-    authenticated = security.authenticate(auth['username'], auth['password'])
+    authenticated = security.authenticate(auth_key='username', auth_value=auth['username'], identifier=auth['password'])
     if authenticated is None:
         return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Required"'})
     else:
-        token = jwt.encode({'user': auth, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
-                           app.config['SECRET_KEY'], algorithm='HS256')
-        return jsonify({'token': token.decode('UTF-8')})
+        token = generate_token(auth)
+        return jsonify({'user_authorized': auth['username'], 'token': token.decode('UTF-8')})
+
+
+@app.route('/login/authorize_google_user', methods=['POST'])
+def authorize_google_user():
+    authCode = json.loads(request.data.decode('utf-8')) # access_token, id_token etc.
+    requested_user = jwt.decode(authCode['id_token'], PRIVATE_KEY, algorithms=['HS256'], verify=False)
+    authenticated = security.authenticate(auth_key='email', auth_value=requested_user['email'],
+                                          identifier=requested_user['email_verified'])
+    # returns True or False and the authenticated user object
+    if authenticated['authenticated_and_authorized']:
+        current_user = authenticated['user']
+        auth = {'email': current_user['email'], 'username': current_user['username']}
+        token = generate_token(auth)
+        return jsonify({'user_authorized': current_user['username'], 'token': token.decode('UTF-8')})
+    else:
+        return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Failed"'})
+
+
+def generate_token(auth):
+    return jwt.encode({'user': auth, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
+                           key=app.config['SECRET_KEY'], algorithm='HS256')
+
