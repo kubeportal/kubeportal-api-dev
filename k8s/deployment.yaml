@@ -21,6 +21,9 @@ spec:
         ports:
         - name: client-port
           containerPort: 5000
+        envFrom:
+          - configMapRef:
+              name: kubeportal-dev-api-config
       imagePullSecrets:
       - name: private-registry-auth
       schedulerName: default-scheduler
