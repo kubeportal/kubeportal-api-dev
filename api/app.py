@@ -18,7 +18,11 @@ PRIVATE_KEY = os.environ.get('GOOGLE_PRIVATE_KEY')
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = request.headers['Authorization'].split(' ')[1]
+        token = None
+        try:
+            token = request.headers['Authorization'].split(' ')[1]
+        except KeyError as e:
+            print(e.__cause__)
         if not token:
             return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Failed"'})
         try:
