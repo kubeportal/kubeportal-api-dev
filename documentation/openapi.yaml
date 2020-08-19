@@ -1,0 +1,179 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0-oas3
+  title: Kubportal Backend API
+paths:
+  /statistics/{stat}:
+    get:
+      parameters:
+        - in: path
+          name: stat
+          required: true
+          schema:
+            type: string
+          description: The statistic type being fetched
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  value:
+                    type: string
+                    example: 1.0.0
+                    
+  /webapps:
+    get:
+      responses:
+        '200':
+          description: A list of web applications allowed for the user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    link_name:
+                      type: string
+                      example: kuchen
+                    link_url:
+                      type: string
+                      example: 'https://mango-saft.com'
+                      
+  /users/{uid}:
+    get:
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: integer
+          description: ID of the user to get
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  firstname: 
+                    type: string
+                    example: 'Mandarin'
+                  name:
+                    type: string
+                    example: 'Orange'
+                  username:
+                    type: string
+                    example: 's77777'
+                  portal_groups:
+                    type: array
+                    items:
+                      type: integer
+                    example: ['1', '2']
+                  service_account:
+                    type: string
+                    example: 'default'
+                  kubernetes_namespace:
+                    type: string
+                    example: 'default'
+
+                    
+  /login:
+    post:
+      summary: Authorize an user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: 's77777'
+                  password:
+                    type: string
+                    example: 'test'
+      responses:
+        '200':
+          description: Ok. Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccess'
+  
+  /login/authorize_google_user:
+    post:
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: 'kolibri@bird.com'
+                  username:
+                    type: string
+                    example: 'CodeinKolibri'
+      responses:
+        '200':
+          description: OK. Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccess'
+      
+  /logout:
+    get:
+      responses:
+        '200':
+          description: OK
+    
+
+components:
+  schemas:
+    LoginSuccess:
+      type: object
+      items:
+        type: object
+      properties:
+        access_token:
+          type: string
+          example: 'eyfrferf.eyfferferfce.efefcerf'
+        refresh_token:
+          type: string
+          example: 'eyfokpkro.gkfefkoperf.fwdofkpw'
+        user:
+          type: object
+          properties:
+            pk: 
+              type: integer
+              example: 1
+            username:
+              type: string
+              example: 's77777'
+            email: 
+              type: string
+              example: 'kakadu@bird.com'
+            first_name:
+              type: string
+              example: 'Mandarin'
+            last_name:
+              type: string
+              example: 'Sirup'
+              
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://virtserver.swaggerhub.com/troeger/Kubeportal/v1.0.0'
