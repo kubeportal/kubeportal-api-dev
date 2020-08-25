@@ -1,20 +1,21 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0-oas3
+  version: 1.1.0
   title: Kubportal Backend API
 paths:
   /statistics/{stat}:
     get:
+      summary: Get single statistic value
       parameters:
         - in: path
           name: stat
           required: true
           schema:
             type: string
-          description: The statistic type being fetched
+          description: The statistic type being fetched.
       responses:
         '200':
-          description: OK
+          description: A single statistic value was returned.
           content:
             application/json:
               schema:
@@ -24,8 +25,9 @@ paths:
                     type: string
                     example: 1.0.0
                     
-  /webapps:
+  /webapps/:
     get:
+      summary: Get list of web applications
       responses:
         '200':
           description: A list of web applications allowed for the user
@@ -45,6 +47,7 @@ paths:
                       
   /users/{uid}:
     get:
+      summary: Get user details
       parameters:
         - in: path
           name: uid
@@ -54,7 +57,7 @@ paths:
           description: ID of the user to get
       responses:
         '200':
-          description: OK
+          description: The description of the user with this ID. 
           content:
             application/json:
               schema:
@@ -71,22 +74,71 @@ paths:
                   username:
                     type: string
                     example: 's77777'
+                  primary_email:
+                    type: string
+                    example: 'foo@bar.de'
+                  alt_emails:
+                    type: array
+                    items:
+                      type: string
+                    example: ['hello@world.de','stein@beisser.de']
+                  admin:
+                    type: boolean
+                    example: true
                   portal_groups:
                     type: array
                     items:
                       type: integer
                     example: ['1', '2']
-                  service_account:
+                  k8s_account:
                     type: string
                     example: 'default'
-                  kubernetes_namespace:
+                  k8s_namespace:
                     type: string
                     example: 'default'
+                  k8s_token:
+                    type: string
+                    example: 'default'
+                  k8s_apiserver:
+                    type: string
+                    example: 'default'
+                  k8s_clustername:
+                    type: string
+                    example: 'default'
+
+
+    patch:
+      summary: Modify user details
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: integer
+          description: ID of the user to change
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                firstname: 
+                  type: string
+                  example: 'Mandarin'
+                name:
+                  type: string
+                  example: 'Orange'
+                primary_email:
+                  type: string
+                  example: 'foo@bar.de'
+      responses:
+        '204':
+          description: Update successful.
+
 
                     
   /login:
     post:
-      summary: Authorize an user
+      summary: Authorize an user with name and password
       requestBody:
         required: true
         content:
@@ -112,6 +164,7 @@ paths:
   
   /login/authorize_google_user:
     post:
+      summary: Authorize a Google user with OAuth credentials
       requestBody:
         required: true
         content: 
@@ -137,6 +190,7 @@ paths:
       
   /logout:
     get:
+      summary: Invalidate API login session.
       responses:
         '200':
           description: OK
@@ -161,19 +215,7 @@ components:
             pk: 
               type: integer
               example: 1
-            username:
-              type: string
-              example: 's77777'
-            email: 
-              type: string
-              example: 'kakadu@bird.com'
-            first_name:
-              type: string
-              example: 'Mandarin'
-            last_name:
-              type: string
-              example: 'Sirup'
-              
+
 servers:
   - description: SwaggerHub API Auto Mocking
     url: 'https://virtserver.swaggerhub.com/troeger/Kubeportal/v1.0.0'
