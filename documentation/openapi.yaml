@@ -212,7 +212,7 @@ components:
         user:
           type: object
           properties:
-            pk: 
+            uid: 
               type: integer
               example: 1
 
