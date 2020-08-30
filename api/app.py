@@ -13,7 +13,7 @@ CORS(app)
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 PRIVATE_KEY = os.environ.get('GOOGLE_PRIVATE_KEY')
-
+API_VERSION = '/v1/'
 
 def token_required(f):
     @wraps(f)
@@ -39,10 +39,10 @@ def token_required(f):
 
 @app.route('/')
 def hello_world():
-    return jsonify({'Json sagt': 'Hallo, I bims, der Json'})
+    return jsonify({'Json sagt': 'Hallo, I bims, der Json ' + API_VERSION})
 
 
-@app.route('/users/<uid>', methods=['GET'])
+@app.route(API_VERSION + '/users/<uid>', methods=['GET'])
 @token_required
 def get_current_user(uid):
     users = mock.users
@@ -50,13 +50,13 @@ def get_current_user(uid):
     return jsonify(user)
 
 
-@app.route('/webapps', methods=['GET'])
+@app.route(API_VERSION + '/webapps', methods=['GET'])
 @token_required
 def get_all_webapps():
     return jsonify(mock.webapps)
 
 
-@app.route('/statistics/<metricname>', methods=['GET'])
+@app.route(API_VERSION + '/statistics/<metricname>', methods=['GET'])
 @token_required
 def get_cluster_statistics(metricname):
     metrics = mock.metrics
@@ -70,7 +70,7 @@ def get_cluster_statistics(metricname):
 
 
 @app.route('/login', methods=['POST'])
-def login():
+def old_login():
     auth = json.loads(request.data.decode('utf-8'))
     authenticated = security.authenticate(auth_key='username', auth_value=auth['username'], identifier=auth['password'])
     if not authenticated['authenticated_and_authorized']:
@@ -80,8 +80,7 @@ def login():
         token = generate_token(auth)
         return jsonify({'user_authorized': auth['username'], 'token': token.decode('UTF-8')})
 
-
-@app.route('/login/authorize_google_user', methods=['POST'])
+@app.route(API_VERSION + '/login/authorize_google_user', methods=['POST'])
 def authorize_google_user():
     authCode = json.loads(request.data.decode('utf-8')) # access_token, id_token etc.
     requested_user = jwt.decode(authCode['id_token'], PRIVATE_KEY, algorithms=['HS256'], verify=False)
