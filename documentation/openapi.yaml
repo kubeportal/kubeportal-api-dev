@@ -77,7 +77,7 @@ paths:
                   primary_email:
                     type: string
                     example: 'foo@bar.de'
-                  alt_emails:
+                  all_emails:
                     type: array
                     items:
                       type: string
