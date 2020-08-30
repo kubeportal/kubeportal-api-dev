@@ -15,6 +15,7 @@ spec:
       labels:
         app: kubeportal-api-dev
     spec:
+      priorityClassName: important
       containers:
       - name: kubeportal-api-dev
         image: registry.datexis.com/ksachs/kubeportal-api-dev:latest
