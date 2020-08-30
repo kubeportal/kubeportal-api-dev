@@ -3,7 +3,7 @@ from flask_login import login_required
 
 from api import mock
 from api.consts import API_VERSION
-
+from api.login import User
 api_bp = Blueprint('api_bp', __name__)
 
 @api_bp.route('/')
@@ -15,7 +15,7 @@ def hello_world():
 @login_required
 def get_current_user(uid):
     users = mock.users
-    user = next((user for user in users if user['username'] == uid), {'user': None})
+    user = User(next((user for user in users if user['username'] == uid), {'user': None}))
     return jsonify(user)
 
 
