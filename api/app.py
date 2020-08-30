@@ -4,9 +4,11 @@ from functools import wraps
 import jwt
 import datetime
 import os
+import json
+
 from . import mock
 from . import security
-import json
+from .utils import bad_request
 
 app = Flask(__name__)
 CORS(app)
@@ -20,19 +22,21 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = None
         try:
+            print('AUTH_HEADER: {}'.format(request.headers['Authorization']))
             token = request.headers['Authorization'].split(' ')[1]
         except KeyError as e:
             print(e.__cause__)
+            return bad_request('Authorization header not found')
         if not token:
-            return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Failed"'})
+            return bad_request('Token is missing.')
         try:
             decoded_token = jwt.decode(token, app.config['SECRET_KEY'])
             verified = security.token_verify(decoded_token)
             if verified is None:
-                return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Failed"'})
+                return bad_request('invalid token.')
         except Exception as e:
             print(e.__cause__)
-            return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic Realm="Login Failed"'})
+            return jsonify({ 'response': 'Server Error', 'status': 500 })
         return f(*args, **kwargs)
     return decorated
 
@@ -83,7 +87,7 @@ def login():
 
 @app.route('/login/authorize_google_user', methods=['POST'])
 def authorize_google_user():
-    authCode = json.loads(request.data.decode('utf-8')) # access_token, id_token etc.
+    authCode = json.loads(request.data.decode('utf-8'))  # access_token, id_token etc.
     requested_user = jwt.decode(authCode['id_token'], PRIVATE_KEY, algorithms=['HS256'], verify=False)
     authenticated = security.authenticate(auth_key='email', auth_value=requested_user['email'],
                                           identifier=requested_user['email_verified'])
@@ -99,5 +103,6 @@ def authorize_google_user():
 
 def generate_token(auth):
     return jwt.encode({'user': auth, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
-                           key=app.config['SECRET_KEY'], algorithm='HS256')
+                      key=app.config['SECRET_KEY'], algorithm='HS256')
+
 
