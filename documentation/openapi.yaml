@@ -12,10 +12,8 @@ paths:
           required: true
           schema:
             type: string
-          description: The statistic type being fetched.
       responses:
         '200':
-          description: A single statistic value was returned.
           content:
             application/json:
               schema:
@@ -30,7 +28,6 @@ paths:
       summary: Get list of web applications
       responses:
         '200':
-          description: A list of web applications allowed for the user
           content:
             application/json:
               schema:
@@ -54,10 +51,8 @@ paths:
           required: true
           schema:
             type: integer
-          description: ID of the user to get
       responses:
         '200':
-          description: The description of the user with this ID. 
           content:
             application/json:
               schema:
@@ -115,7 +110,6 @@ paths:
           required: true
           schema:
             type: integer
-          description: ID of the user to change
       requestBody:
         content:
           application/json:
@@ -132,9 +126,6 @@ paths:
                   example: 'foo@bar.de'
       responses:
         '204':
-          description: Update successful.
-
-
                     
   /login:
     post:
@@ -156,7 +147,6 @@ paths:
                     example: 'test'
       responses:
         '200':
-          description: Ok. Authorized
           content:
             application/json:
               schema:
@@ -182,7 +172,6 @@ paths:
                     example: 'CodeinKolibri'
       responses:
         '200':
-          description: OK. Authorized
           content:
             application/json:
               schema:
@@ -193,7 +182,6 @@ paths:
       summary: Invalidate API login session.
       responses:
         '200':
-          description: OK
     
 
 components:
