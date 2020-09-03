@@ -1,7 +1,5 @@
-from flask import Blueprint, request
-from flask_login import (current_user, login_required, login_user, logout_user)
+from flask import Blueprint, request, jsonify
 from api.consts import API_VERSION
-from api.app import login_manager
 from api.mock import users
 
 import json
@@ -12,23 +10,24 @@ login_bp = Blueprint('login_bp', __name__)
 @login_bp.route(API_VERSION + '/login', methods=['POST'])
 def login():
     request_data = json.loads(request.data.decode('utf-8'))
+    print(request_data)
     try:
-        user = load_user(request_data.get('username'))
-        if user is not None:
-            login_user(user, remember=True)
+        userdata = find_user(request_data.get('username'))
+        if userdata is not None:
+            return userdata
     except KeyError as e:
         print(e.__cause__)
+        return jsonify({'username': None, 'status': 400})
+    return jsonify({'username': None, 'status': 400})
 
 
-@login_manager.user_loader
-def load_user(username):
-    authenticated_user = next((user for user in users if user['username'] == username), {'user': None})
-    return User(authenticated_user)
+def find_user(username):
+    return next((user for user in users if user['username'] == username), {'user': None})
 
 
 class User:
     def __init__(self, user):
-        self.active = 'false'
+        self.active = 'true'
         self.authenticated = 'false'
         self.id = user.get('id')
         self.name = user.get('name')
