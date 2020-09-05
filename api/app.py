@@ -6,6 +6,7 @@ from api.consts import SECRET_KEY
 
 login_manager = LoginManager()
 
+
 def register_blueprints():
     from api.login import login_bp
     from api.api import api_bp
