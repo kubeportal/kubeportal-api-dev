@@ -1,10 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_login import LoginManager
-
 from api.consts import SECRET_KEY
-
-login_manager = LoginManager()
 
 
 def register_blueprints():
@@ -16,12 +13,13 @@ def register_blueprints():
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    login_manager = LoginManager()
     login_manager.init_app(app)
+    CORS(app)
     return app
-
 
 app = create_app()
 register_blueprints()
 app.config['SECRET_KEY'] = SECRET_KEY
+
 
