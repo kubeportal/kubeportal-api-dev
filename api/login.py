@@ -1,19 +1,31 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from api.consts import API_VERSION
 from api.mock import users
+from functools import wraps
 
 import json
 
 login_bp = Blueprint('login_bp', __name__)
 
 
+def log_info(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        print(f'request data: {request.headers["Host"]}')
+        print(f'request data: {request.headers["Content-Length"]}')
+        return f(*args, **kwargs)
+    return decorated
+
+
 @login_bp.route(API_VERSION + '/login', methods=['POST'])
+@log_info
 def login():
     request_data = json.loads(request.data.decode('utf-8'))
     print(request_data)
     try:
         userdata = find_user(request_data.get('username'))
         if userdata is not None:
+            session['username'] = request_data.get('username')
             return userdata
     except KeyError as e:
         print(e.__cause__)
