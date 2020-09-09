@@ -1,70 +1,133 @@
 openapi: 3.0.0
 info:
-  version: 1.1.0
+  version: v1.2.0
   title: Kubportal Backend API
 paths:
-  /statistics/{stat}:
+  /cluster/{info}:
     get:
-      summary: Get single statistic value
+      summary: Get informations about the cluster
       parameters:
         - in: path
-          name: stat
+          name: info
           required: true
           schema:
             type: string
-          description: The statistic type being fetched.
+            enum:
+              - portal_user_count  # Number of portal users registered
+              - portal_version     # Version of the portal software
+              - k8s_version        # Version of the Kubernetes installation
+              - k8s_node_count     # Number of Kubernetes nodes
+              - k8s_cpu_count      # Number of CPU cores in Kubernetes
+              - k8s_mem_sum        # Amount of main memory in Kubernetes
+              - k8s_pod_count      # Number of Kubernetes pods 
+              - k8s_volume_count   # Number of Kubernetes volumes
+              - k8s_apiserver_url  # URL of the API server
+              - k8s_cluster_name   # Human-readable name of the cluster
+
       responses:
         '200':
-          description: A single statistic value was returned.
+          description: A single information value.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  value:
-                    type: string
-                    example: 1.0.0
+                type: string
+                example: 64GBi
                     
-  /webapps/:
+  /webapps/{id}:
     get:
-      summary: Get list of web applications
+      summary: Get details about a web application.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the web application.
       responses:
         '200':
-          description: A list of web applications allowed for the user
+          description: Attributes of the web application.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebApp'
+
+  /groups/{id}:
+    get:
+      summary: Get details about a user group.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the user group.
+      responses:
+        '200':
+          description: Attributes of the user group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+
+
+  /users/{id}/webapps:
+    get:
+      summary: Get web apps of the user details
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+      responses:
+        '200':
+          description: Ok
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    link_name:
-                      type: string
-                      example: kuchen
-                    link_url:
-                      type: string
-                      example: 'https://mango-saft.com'
-                      
-  /users/{uid}:
+                  $ref: '#/components/schemas/WebApp'
+
+  /users/{id}/groups:
+    get:
+      summary: Get groups of the user 
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+
+
+  /users/{id}:
     get:
       summary: Get user details
       parameters:
         - in: path
-          name: uid
+          name: id
           required: true
           schema:
             type: integer
           description: ID of the user to get
       responses:
         '200':
-          description: The description of the user with this ID. 
+          description: Ok.
           content:
             application/json:
               schema:
                 properties:
-                  id:
-                    type: integer
-                    example: 1
                   firstname: 
                     type: string
                     example: 'Mandarin'
@@ -85,12 +148,8 @@ paths:
                   admin:
                     type: boolean
                     example: true
-                  portal_groups:
-                    type: array
-                    items:
-                      type: integer
-                    example: ['1', '2']
-                  k8s_account:
+
+                  k8s_serviceaccount:
                     type: string
                     example: 'default'
                   k8s_namespace:
@@ -99,19 +158,11 @@ paths:
                   k8s_token:
                     type: string
                     example: 'default'
-                  k8s_apiserver:
-                    type: string
-                    example: 'default'
-                  k8s_clustername:
-                    type: string
-                    example: 'default'
-
-
     patch:
       summary: Modify user details
       parameters:
         - in: path
-          name: uid
+          name: id
           required: true
           schema:
             type: integer
@@ -161,8 +212,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginSuccess'
+          links:
+            getUserById:
+              operationId: uid
+              parameters:
+                uid: '$response.body.uid'
   
-  /login/authorize_google_user:
+  /login_google:
     post:
       summary: Authorize a Google user with OAuth credentials
       requestBody:
@@ -174,12 +230,9 @@ paths:
               items:
                 type: object
                 properties:
-                  email:
+                  access_token:
                     type: string
-                    example: 'kolibri@bird.com'
-                  username:
-                    type: string
-                    example: 'CodeinKolibri'
+                    example: 'asfldhgwe847g'
       responses:
         '200':
           description: OK. Authorized
@@ -200,22 +253,27 @@ components:
   schemas:
     LoginSuccess:
       type: object
-      items:
-        type: object
       properties:
-        access_token:
+        id: 
+          type: integer
+          example: 1
+        firstname: 
           type: string
-          example: 'eyfrferf.eyfferferfce.efefcerf'
-        refresh_token:
+          example: 'Mandarin'
+    WebApp:
+      type: object
+      properties:
+        link_name:
           type: string
-          example: 'eyfokpkro.gkfefkoperf.fwdofkpw'
-        user:
-          type: object
-          properties:
-            uid: 
-              type: integer
-              example: 1
-
-servers:
-  - description: SwaggerHub API Auto Mocking
-    url: 'https://virtserver.swaggerhub.com/troeger/Kubeportal/v1.0.0'
+          example: kuchen
+        link_url:
+          type: string
+          example: 'https://mango-saft.com'
+    Group:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Kubernetes users
+    
+        
