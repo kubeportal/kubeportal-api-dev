@@ -8,7 +8,7 @@ login_manager = LoginManager()
 
 
 def register_blueprints():
-    from api.login import login_bp
+    from api.user import login_bp
     from api.api import api_bp
     app.register_blueprint(login_bp)
     app.register_blueprint(api_bp)
