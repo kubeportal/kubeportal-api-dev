@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify, session
+from flask_api import status
+
 from api.consts import API_VERSION
-from api.mock import users
+from api import mock
 from functools import wraps
 
 import json
@@ -20,56 +22,68 @@ def log_info(f):
 @log_info
 def login():
     request_data = json.loads(request.data.decode('utf-8'))
-    print(request_data)
+    user = mock.users[0]
     try:
-        userdata = _find_user(request_data.get('username'))
         request_data.get('password') # only testing
-        if userdata:
-            session['username'] = request_data.get('username')
-            response = {"id": userdata.get('id'), "firstname": userdata.get('firstname')}
-            return response
+        session['username'] = request_data.get('username')
+        response = jsonify({"id": user['id'], "firstname": user['firstname']})
+        print(str(response))
+        return response, status.HTTP_200_OK
     except KeyError as e:
         print(e.__cause__)
-    return jsonify({'username': None, 'status': 400})
+    return status.HTTP_400_BAD_REQUEST
+
 
 @login_bp.route(f'{API_VERSION}/login_google', methods=['POST'])
 def google_login():
     request_data = json.loads(request.data.decode('utf-8'))
-    request_data.get('access_token')
-    response = {"id": 1, "firstname": "Mandarin"}
-    return jsonify(response)
+    try:
+        request_data.get('access_token')
+        response = jsonify({"id": 1, "firstname": "Mandarin"})
+        return response, status.HTTP_200_OK
+    except KeyError as e:
+        print(e.__cause__)
+    return status.HTTP_400_BAD_REQUEST
 
 
 @login_bp.route(f'{API_VERSION}/users/<id>', methods=['GET'])
 def get_current_user(id):
     user = _find_user_with_id(id=id)
-    return jsonify(user)
+    print(f'user with id ${id} found: ${user}')
+    return jsonify(user), status.HTTP_200_OK
 
 
-@login_bp.route(f'{API_VERSION}/<id>/webapps', methods=['GET'])
+@login_bp.route(f'{API_VERSION}/users/<id>/webapps', methods=['GET'])
 def get_user_webapps(id):
-    user = _find_user_with_id(id=id)
-    webapps = user.get('webapps')
+    webapps = mock.webapps
     response = []
-    @TODO
     for webapp in webapps:
         response.append({"link_name": webapp.get('link_name'), "link_url": webapp.get("link_url")})
-    return jsonify(user.get('webapps'))
+    return jsonify(response), status.HTTP_200_OK
+
 
 @login_bp.route(f'{API_VERSION}/users/<id>', methods=['PATCH'])
 def update_user(id):
     request_data = json.loads(request.data.decode('utf-8'))
     user = _find_user_with_id(id=id)
-    for (key, value) in request_data:
-        user[key] = value
-    return jsonify(user)
+    if user:
+        for (key, value) in request_data:
+            if key in user.keys():
+                user[key] = value
+            else: return status.HTTP_404_NOT_FOUND
+        return jsonify(user), status.HTTP_200_OK
+    return status.HTTP_404_NOT_FOUND
 
 
 def _find_user_with_username(username):
+    users = mock.users
     return next((user for user in users if user['username'] == username), {'user': None})
 
+
 def _find_user_with_id(id):
+    users = mock.users
     return next((user for user in users if user['id'] == id), {'user': None})
+
 
 class User:
     def __init__(self, user):

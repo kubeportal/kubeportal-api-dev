@@ -49,10 +49,9 @@ users = [{"id": 1,
          ]
 
 
-
-cluster_info = [{"portal_user_count": "120"}, {"portal_version": "v.0.3.16"}, {"k8s_version": "v1.15.4"},
-                {"k8s_node_count": "24"}, {"k8s_cpu_count": "1536"}, {"k8s_mem_sum": "12543.876796Gi" },
-                {"k8s_pod_sum": 723}, {"k8s_volume_count": 227}, {"k8s_apiserver_url": "https://10.96.0.1:443"},
-                {"k8s_cluster_name": "clustername"}]
+cluster_info = {"portal_user_count": "120", "portal_version": "v.0.3.16", "k8s_version": "v1.15.4",
+                "k8s_node_count": "24", "k8s_cpu_count": "1536", "k8s_mem_sum": "12543.876796Gi",
+                "k8s_pod_count": 723, "k8s_volume_count": 227, "k8s_apiserver_url": "https://10.96.0.1:443",
+                "k8s_cluster_name": "clustername"}
 
 groups = [{"id": 1, "group_name": "Kubernetes User"}, {"id": 2, "group_name": "Datexis SHK"}]
