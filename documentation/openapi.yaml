@@ -127,37 +127,8 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  firstname: 
-                    type: string
-                    example: 'Mandarin'
-                  name:
-                    type: string
-                    example: 'Orange'
-                  username:
-                    type: string
-                    example: 's77777'
-                  primary_email:
-                    type: string
-                    example: 'foo@bar.de'
-                  all_emails:
-                    type: array
-                    items:
-                      type: string
-                    example: ['hello@world.de','stein@beisser.de']
-                  admin:
-                    type: boolean
-                    example: true
+                $ref: '#/components/schemas/User'
 
-                  k8s_serviceaccount:
-                    type: string
-                    example: 'default'
-                  k8s_namespace:
-                    type: string
-                    example: 'default'
-                  k8s_token:
-                    type: string
-                    example: 'default'
     patch:
       summary: Modify user details
       parameters:
@@ -184,7 +155,10 @@ paths:
       responses:
         '204':
           description: Update successful.
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
 
                     
   /login:
@@ -260,6 +234,39 @@ components:
         firstname: 
           type: string
           example: 'Mandarin'
+    User:
+      type: object
+      properties:
+        firstname: 
+          type: string
+          example: 'Mandarin'
+        name:
+          type: string
+          example: 'Orange'
+        username:
+          type: string
+          example: 's77777'
+        primary_email:
+          type: string
+          example: 'foo@bar.de'
+        all_emails:
+          type: array
+          items:
+            type: string
+          example: ['hello@world.de','stein@beisser.de']
+        admin:
+          type: boolean
+          example: true
+
+        k8s_serviceaccount:
+          type: string
+          example: 'default'
+        k8s_namespace:
+          type: string
+          example: 'default'
+        k8s_token:
+          type: string
+          example: 'default'
     WebApp:
       type: object
       properties:
