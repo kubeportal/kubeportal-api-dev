@@ -30,8 +30,11 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                example: 64GBi
+                type: object
+                properties:
+                  value:
+                    type: string
+                    example: 64GBi
         '404':
           description: The name of requested fact is invalid.
                     
@@ -54,6 +57,8 @@ paths:
                 $ref: '#/components/schemas/WebApp'
         '403':
           description: The user is not in a group assigned to this application, or the link is configured to not being shown.
+        '404':
+          description: The given ID is invalid.
 
   /groups/{id}:
     get:
@@ -74,6 +79,8 @@ paths:
                 $ref: '#/components/schemas/Group'
         '403':
           description: The user is not in this group.
+        '404':
+          description: The given ID is invalid.
 
 
   /users/{id}/webapps:
@@ -95,6 +102,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WebApp'
+        '403':
+          description: The current user is not allowed to get information for the requested user ID.
+        '404':
+          description: The given ID is invalid.
 
   /users/{id}/groups:
     get:
@@ -115,6 +126,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Group'
+        '403':
+          description: The current user is not allowed to get information for the requested user ID.
+        '404':
+          description: The given ID is invalid.
 
 
   /users/{id}:
@@ -134,6 +149,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '403':
+          description: The current user is not allowed to get information for the requested user ID.
+        '404':
+          description: The given ID is invalid.
 
     patch:
       summary: Modify user details
@@ -165,6 +184,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '403':
+          description: The current user is not allowed to patch information for the requested user ID.
+        '404':
+          description: The given ID is invalid.
 
                     
   /login:
@@ -192,12 +215,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginSuccess'
-          links:
-            getUserById:
-              operationId: uid
-              parameters:
-                uid: '$response.body.uid'
-  
+
   /login_google:
     post:
       summary: Authorize a Google user with OAuth credentials
@@ -283,7 +301,8 @@ components:
           type: string
           example: 'https://mango-saft.com'
     Group:
-      type: string
-      example: Kubernetes users
-    
-        
+      type: object
+      properties:
+        name:
+          type: string
+          example: Kubernetes users
