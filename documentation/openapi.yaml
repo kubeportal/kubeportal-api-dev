@@ -270,10 +270,7 @@ components:
           type: string
           example: 'https://mango-saft.com'
     Group:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Kubernetes users
+      type: string
+      example: Kubernetes users
     
         
