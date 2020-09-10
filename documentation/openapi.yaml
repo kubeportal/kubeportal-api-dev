@@ -3,12 +3,12 @@ info:
   version: v1.2.0
   title: Kubportal Backend API
 paths:
-  /cluster/{info}:
+  /cluster/{id}:
     get:
-      summary: Get information fact about the cluster.
+      summary: Get information about the cluster.
       parameters:
         - in: path
-          name: info
+          name: id
           required: true
           schema:
             type: string
@@ -36,7 +36,9 @@ paths:
                     type: string
                     example: 64GBi
         '404':
-          description: The name of requested fact is invalid.
+          $ref: '#/components/responses/NotFound'   
+        '401':
+          $ref: '#/components/responses/Unauthorized'   
                     
   /webapps/{id}:
     get:
@@ -58,7 +60,9 @@ paths:
         '403':
           description: The user is not in a group assigned to this application, or the link is configured to not being shown.
         '404':
-          description: The given ID is invalid.
+          $ref: '#/components/responses/NotFound'   
+        '401':
+          $ref: '#/components/responses/Unauthorized'   
 
   /groups/{id}:
     get:
@@ -80,12 +84,14 @@ paths:
         '403':
           description: The user is not in this group.
         '404':
-          description: The given ID is invalid.
+          $ref: '#/components/responses/NotFound'   
+        '401':
+          $ref: '#/components/responses/Unauthorized'   
 
 
   /users/{id}/webapps:
     get:
-      summary: Get web apps of the user details
+      summary: Get web apps of this user.
       parameters:
         - in: path
           name: id
@@ -105,11 +111,13 @@ paths:
         '403':
           description: The current user is not allowed to get information for the requested user ID.
         '404':
-          description: The given ID is invalid.
+          $ref: '#/components/responses/NotFound'   
+        '401':
+          $ref: '#/components/responses/Unauthorized'   
 
   /users/{id}/groups:
     get:
-      summary: Get groups of the user 
+      summary: Get groups of this user. 
       parameters:
         - in: path
           name: id
@@ -129,12 +137,14 @@ paths:
         '403':
           description: The current user is not allowed to get information for the requested user ID.
         '404':
-          description: The given ID is invalid.
+          $ref: '#/components/responses/NotFound'   
+        '401':
+          $ref: '#/components/responses/Unauthorized'   
 
 
   /users/{id}:
     get:
-      summary: Get user details
+      summary: Get details for this user.
       parameters:
         - in: path
           name: id
@@ -152,10 +162,12 @@ paths:
         '403':
           description: The current user is not allowed to get information for the requested user ID.
         '404':
-          description: The given ID is invalid.
+          $ref: '#/components/responses/NotFound'   
+        '401':
+          $ref: '#/components/responses/Unauthorized'   
 
     patch:
-      summary: Modify user details
+      summary: Modify details for this user.
       parameters:
         - in: path
           name: id
@@ -187,7 +199,9 @@ paths:
         '403':
           description: The current user is not allowed to patch information for the requested user ID.
         '404':
-          description: The given ID is invalid.
+          $ref: '#/components/responses/NotFound'   
+        '401':
+          $ref: '#/components/responses/Unauthorized'   
 
                     
   /login:
@@ -238,6 +252,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginSuccess'
+        '400':
+          description: Invalid credentials, login denied.
       
   /logout:
     get:
@@ -248,6 +264,12 @@ paths:
     
 
 components:
+  responses:
+    NotFound:
+      description: The specified ID is invalid.
+    Unauthorized:
+      description: This endpoint demands authentication first.
+
   schemas:
     LoginSuccess:
       type: object
