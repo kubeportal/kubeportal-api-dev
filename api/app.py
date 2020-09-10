@@ -16,12 +16,12 @@ def register_blueprints():
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
     login_manager.init_app(app)
     return app
 
 
 app = create_app()
+CORS(app)
 register_blueprints()
 app.config['SECRET_KEY'] = SECRET_KEY
 
