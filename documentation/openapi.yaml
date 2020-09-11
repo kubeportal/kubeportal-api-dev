@@ -3,12 +3,12 @@ info:
   version: v1.2.0
   title: Kubportal Backend API
 paths:
-  /cluster/{id}:
+  /cluster/{slug}:
     get:
       summary: Get information about the cluster.
       parameters:
         - in: path
-          name: id
+          name: slug
           required: true
           schema:
             type: string
@@ -26,15 +26,7 @@ paths:
 
       responses:
         '200':
-          description: A single information value.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  value:
-                    type: string
-                    example: 64GBi
+          description: A single information value as JSON dictionary with one entry. The key is the slug name.
         '404':
           $ref: '#/components/responses/NotFound'   
         '401':
@@ -271,6 +263,8 @@ components:
       description: This endpoint demands authentication first.
 
   schemas:
+    StatisticType:
+      type: string
     LoginSuccess:
       type: object
       properties:
