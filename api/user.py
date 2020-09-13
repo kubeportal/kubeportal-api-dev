@@ -25,9 +25,9 @@ def login():
     user = mock.users[0]
     try:
         request_data.get('password') # only testing
-        session['username'] = request_data.get('username')
+        request_data.get('username') # only testing
+        session['username'] = user['username']
         response = jsonify({"id": user['id'], "firstname": user['firstname']})
-        print(str(response))
         return response, status.HTTP_200_OK
     except KeyError as e:
         print(e.__cause__)
@@ -49,8 +49,11 @@ def google_login():
 @login_bp.route(f'{API_VERSION}/users/<id>', methods=['GET'])
 def get_current_user(id):
     user = _find_user_with_id(id=id)
-    print(f'user with id ${id} found: ${user}')
-    return jsonify(user), status.HTTP_200_OK
+    response = jsonify({"firstname": user.get('firstname'), "name": user.get('name'), "username" : user.get('username'),
+                        "primary_email": user.get('primary_email'), "all_emails": user.get('all_emails'),
+                        "admin": user.get('admin'), "k8s_serviceaccount": user.get('k8s_serviceaccount'),
+                        "k8s_namespace": user.get('k8s_namespace'), "k8s_token": user.get('k8s_token')})
+    return response, status.HTTP_200_OK
 
 
 @login_bp.route(f'{API_VERSION}/users/<id>/webapps', methods=['GET'])
@@ -62,6 +65,13 @@ def get_user_webapps(id):
     return jsonify(response), status.HTTP_200_OK
 
 
+@login_bp.route(f'{API_VERSION}/users/<id>/groups', methods=['GET'])
+def get_user_webapps(id):
+    user = mock.users[0]
+    response = jsonify({"name": user.get('groups')})
+    return jsonify(response), status.HTTP_200_OK
+
+
 @login_bp.route(f'{API_VERSION}/users/<id>', methods=['PATCH'])
 def update_user(id):
     request_data = json.loads(request.data.decode('utf-8'))
@@ -70,7 +80,8 @@ def update_user(id):
         for (key, value) in request_data:
             if key in user.keys():
                 user[key] = value
-            else: return status.HTTP_404_NOT_FOUND
+            else:
+                return status.HTTP_404_NOT_FOUND
         return jsonify(user), status.HTTP_200_OK
     return status.HTTP_404_NOT_FOUND
 
@@ -82,7 +93,7 @@ def _find_user_with_username(username):
 
 def _find_user_with_id(id):
     users = mock.users
-    return next((user for user in users if user['id'] == id), {'user': None})
+    return next((user for user in users if user['id'] == int(id)), {'user': None})
 
 
 class User:

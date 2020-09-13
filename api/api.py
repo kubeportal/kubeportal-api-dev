@@ -16,12 +16,12 @@ def get_api_version():
     return jsonify({'Json sagt': API_VERSION}), status.HTTP_200_OK
 
 
-@api_bp.route(f'{API_VERSION}/cluster/<info>', methods=['GET'])
-def get_cluster_info(info):
+@api_bp.route(f'{API_VERSION}/cluster/<slug>', methods=['GET'])
+def get_cluster_info(slug):
     cluster_info = mock.cluster_info
     for key, value in cluster_info.items():
-        if info == key:
-            response = jsonify({info: value})
+        if slug == key:
+            response = jsonify({slug: value})
             return response, status.HTTP_200_OK
     return jsonify(status.HTTP_404_NOT_FOUND)
 
