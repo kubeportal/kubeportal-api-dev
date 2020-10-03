@@ -1,11 +1,13 @@
 openapi: 3.0.0
 info:
-  version: v1.2.0
+  version: v1.3.0
   title: Kubportal Backend API
 paths:
   /cluster/{slug}:
     get:
       summary: Get information about the cluster.
+      security:
+        - JWT: [ ]
       parameters:
         - in: path
           name: slug
@@ -35,6 +37,8 @@ paths:
   /webapps/{id}:
     get:
       summary: Get details about a web application.
+      security:
+        - JWT: [ ]
       parameters:
         - in: path
           name: id
@@ -59,6 +63,8 @@ paths:
   /groups/{id}:
     get:
       summary: Get details about a user group.
+      security:
+        - JWT: [ ]
       parameters:
         - in: path
           name: id
@@ -84,6 +90,8 @@ paths:
   /users/{id}/webapps:
     get:
       summary: Get web apps of this user.
+      security:
+        - JWT: [ ]
       parameters:
         - in: path
           name: id
@@ -109,7 +117,9 @@ paths:
 
   /users/{id}/groups:
     get:
-      summary: Get groups of this user. 
+      summary: Get groups of this user.
+      security:
+        - JWT: [ ]
       parameters:
         - in: path
           name: id
@@ -137,6 +147,8 @@ paths:
   /users/{id}:
     get:
       summary: Get details for this user.
+      security:
+        - JWT: [ ]
       parameters:
         - in: path
           name: id
@@ -160,6 +172,8 @@ paths:
 
     patch:
       summary: Modify details for this user.
+      security:
+        - JWT: [ ]
       parameters:
         - in: path
           name: id
@@ -250,12 +264,20 @@ paths:
   /logout:
     get:
       summary: Invalidate API login session.
+      security:
+        - JWT: [ ]
       responses:
         '200':
           description: OK
     
 
 components:
+  securitySchemes:
+    JWT: # arbitrary name for the security scheme
+      type: apiKey
+      in: header # can be "header", "query" or "cookie"
+      name: Authorization # name of the header, query parameter or cookie
+
   responses:
     NotFound:
       description: The specified ID is invalid.
@@ -274,6 +296,9 @@ components:
         firstname: 
           type: string
           example: 'Mandarin'
+        token:
+          type: string
+          example: 'eyfjopgfvdvfer.fpkksdner.jhjdemvpdf'
     User:
       type: object
       properties:
