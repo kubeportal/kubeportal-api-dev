@@ -95,8 +95,8 @@ def get_user_webapps(id):
               origins=['http://localhost:8086'])
 def get_user_groups(id):
     user = mock.users[0]
-    data = {"name": user.get('groups')}
-    return jsonify(data), status.HTTP_200_OK
+    response = jsonify({"name": user.get('groups')})
+    return jsonify(response), status.HTTP_200_OK
 
 
 @login_bp.route(f'/api/{API_VERSION}/users/<id>', methods=['PATCH'])
