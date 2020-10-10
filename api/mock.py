@@ -1,51 +1,28 @@
-webapps = [{"id": 1, "link_name": "kakatoo", "link_url": "https://mango.com"},
+webapps = [{"id": 1, "link_name": "Kakatoo", "link_url": "https://mango.com"},
            {"id": 2, "link_name": "Mango", "link_url": "https://mango.com"},
            {"id": 3, "link_name": "Hase", "link_url": "https://mango.com"},
-           {"id": 4, "link_name": "Kolibri", "link_url": "https://mango.com"}]
+           {"id": 4, "link_name": "Kolibri", "link_url": "https://mango.com"},
+           {"id": 5, "link_name": "Apfel", "link_url": "https://mango.com"},
+           {"id": 6, "link_name": "Kirsche", "link_url": "https://mango.com"},
+           {"id": 7, "link_name": "Panda", "link_url": "https://mango.com"},
+           {"id": 8, "link_name": "Schmetterling", "link_url": "https://mango.com"}]
 
 users = [{"id": 1,
           "firstname": "Mandarin",
           "name": "Orange",
           "username": "s77518",
           "primary_email": 'bird@kakadu.com',
-          "all_emails": ['bird@kakadu.com', 'kakadu@kamel.de'],
+          "all_emails": ['bird@kakadu.com', 'kakadu@kamel.de', 's87r2390@uni.de', 'dasdas@university.de'],
           "admin": True,
           "webapps": webapps,
-          "portal_groups": ['Kubernetes users'],
+          "user_groups": ['Kubernetes users'],
           "k8s_serviceaccount": 'default',
           "k8s_namespace": 'default',
           "k8s_token": 'default',
           "k8s_apiserver": 'default',
-          "k8s_clustername": 'default'
-          },
-         {"id": 2,
-          "firstname": "Tannenbaum",
-          "name": "Ananas",
-          "username": "Peter",
-          "primary_email": 'bird@kakadu.com',
-          "all_emails": ['bird@kakadu.com', 'kakadu@kamel.de'],
-          "admin": True,
-          "portal_groups": ['1', '2'],
-          "k8s_account": 'default',
-          "k8s_namespace": 'default',
-          "k8s_token": 'default',
-          "k8s_apiserver": 'default',
-          "k8s_clustername": 'default'
-          },
-         {"id": 3,
-          "firstname": "Mandarin",
-          "name": "Mandarine",
-          "username": "Kathi",
-          "primary_email": 'bird@kakadu.com',
-          "all_emails": ['bird@kakadu.com', 'kakadu@kamel.de'],
-          "admin": True,
-          "portal_groups": ['1', '2'],
-          "k8s_account": 'default',
-          "k8s_namespace": 'default',
-          "k8s_token": 'default',
-          "k8s_apiserver": 'default',
-          "k8s_clustername": 'default'
-          },
+          "k8s_clustername": 'default',
+          "cluster_access": 'approved'
+          }
          ]
 
 

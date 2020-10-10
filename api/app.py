@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_cors import CORS
 from flask_login import LoginManager
 
 from api.consts import SECRET_KEY
@@ -21,8 +20,6 @@ def create_app():
 
 
 app = create_app()
-CORS(app)
 register_blueprints()
 app.config['SECRET_KEY'] = SECRET_KEY
-
 
